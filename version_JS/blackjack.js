@@ -8,9 +8,7 @@ var symbols = ['C', 'D', 'S', 'H'];
 var pPoint, dPoint, myCards, myHand, myLabel,myPoints, holeCard, num;
 
 var img1 = document.getElementById('img1');
-var img2 = document.getElementById('img2');
 var img3 = document.getElementById('img3');
-var img4 = document.getElementById('img4');
 var lblPlayerPoints = document.getElementById('player-points');
 var lblDealerPoints = document.getElementById('dealer-points');
 
@@ -21,8 +19,8 @@ var buttonPlayAgain = document.getElementById('playAgain');
 buttonPlayAgain.classList.add('hide');
 buttonStand.disabled = true;
 buttonHit.disabled = true;
-var playerhand = document.getElementById('player-hand');
-var dealerhand = document.getElementById('dealer-hand');
+// var playerhand = document.getElementById('player-hand');
+// var dealerhand = document.getElementById('dealer-hand');
 var messages = document.getElementById('messages');
 
 
@@ -73,7 +71,7 @@ createNewDeck();
 const whoseCard = who => {
     myCards = (who === 'dealer'? dealerCards: playerCards);
     myPoints = (who === 'dealer' ? dealerPoints : playerPoints);
-    myHand = (who === 'dealer'? dealerhand: playerhand);
+    myHand = (who === 'dealer'? document.getElementById('dealer-hand'): document.getElementById('player-hand'));
     myLabel = (who === 'dealer'? lblDealerPoints: lblPlayerPoints);
 }
 
@@ -152,7 +150,7 @@ const deck = () => {
  
     //player deck
     img3.src = imgNumber('player')
-    img4.src = imgNumber('player')
+    document.getElementById('img4').src = imgNumber('player')
 
     displayPoints('deck');
     buttonDeal.classList.add('hide');
@@ -164,8 +162,7 @@ const deck = () => {
 
 // ==== hit button
 const hit = () => {
-    loadNewCard('player')
-    img1.src = holeCard;
+    loadNewCard('player');
     displayPoints('hit');
     whoWon('hit');
 };
@@ -192,7 +189,7 @@ const addPoint = (who) => {
     } else {
         myPoints[0].points += num;
     }
-}
+    }
 
 const checkPointDiff = (pPoint, dPoint)=>{
     let pPointDiff = Math.abs(21 - pPoint);
@@ -209,19 +206,22 @@ const checkPointDiff = (pPoint, dPoint)=>{
 const useAcePoint = (who) => {
     whoseCard(who);
     myPoints[0].points -= 10;
-    myPoints[1].acePoints = 10;
+    myPoints[1].acePoints -= 10;
     myLabel.textContent = myPoints[0].points ;
+}
+
+const revealHoleCard = () => {
+    img1.src = holeCard;
+    lblDealerPoints.textContent = dealerPoints[0].points;    
 }
 
 const checkBlackJack = () =>{
     if (dealerCards.length ==2 && dealerPoints[2].suitFlag && dealerPoints[1].acePoints>0){
-        img1.src = holeCard;
-        lblDealerPoints.textContent = dealerPoints[0].points;
+        revealHoleCard();
         displayMessage("Lost with Dealer's Blackjack");   
         return true   
     } else if (playerCards.length ==2 && playerPoints[2].suitFlag && playerPoints[1].acePoints>0){
-        img1.src = holeCard;
-        lblDealerPoints.textContent = dealerPoints[0].points;
+        revealHoleCard();
         displayMessage('Won with Blackjack');
         return true 
     } else {
@@ -260,12 +260,14 @@ const whoWon = (where) => {
             return false
         } else if (pPoint<21 && dPoint >= 17) {  // check depending on point
             checkPointDiff(pPoint, dPoint);
-        // Ace 
+            revealHoleCard();
+            // Ace 
         }else if (pPoint>21 && (playerPoints[1].acePoints > 0) && (pPoint - 10 < 21)){  //Ace
             useAcePoint('player')
             displayPoints('hit');
             return false
         } else{
+            img1.src = holeCard;
             return displayMessage("Lost. Busted!")
         }
     } else if (where == 'stand'){
