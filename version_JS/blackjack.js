@@ -17,8 +17,8 @@ var buttonDeal = document.getElementById('deal-button');
 var buttonStand = document.getElementById('stand-button');
 var buttonPlayAgain = document.getElementById('playAgain');
 buttonPlayAgain.classList.add('hide');
-buttonStand.disabled = true;
-buttonHit.disabled = true;
+buttonHit.classList.remove('hide');
+buttonStand.classList.remove('hide');
 // var playerhand = document.getElementById('player-hand');
 // var dealerhand = document.getElementById('dealer-hand');
 var messages = document.getElementById('messages');
@@ -35,8 +35,6 @@ const startGame = () => {
     img3.parentNode.classList.remove('winHand');
     buttonPlayAgain.classList.add('hide');
     buttonDeal.classList.remove('hide');
-    buttonHit.disabled = true;
-    buttonStand.disabled = true;
     num = 0;
 
     lblPlayerPoints.textContent = '';
@@ -98,9 +96,9 @@ const imgNumber = who => {
     cards.pop(cardNo)  // remove chosen card from allCard
     addPoint(who)
     myCards.push(cardNo)
-
     return "imgs/" + cardNo+ ".jpg" // images path
 };
+
 
 
 // ==== displayPoints
@@ -126,8 +124,8 @@ const displayMessage = status => {
         img3.parentNode.classList.add('winHand');
     }
     buttonPlayAgain.classList.remove('hide');
-    buttonHit.disabled = true;
-    buttonStand.disabled = true;
+    buttonHit.classList.add('hide');
+    buttonStand.classList.add('hide');
 };
 
 // ==== load Additional card from hit/stand
@@ -248,6 +246,8 @@ const whoWon = (where) => {
     };    
     
     if (where === 'deck'){
+        buttonHit.classList.remove('hide');
+        buttonStand.classList.remove('hide');
         if(myPoints[1].acePoints == 20){   //if plyaers has 2 Aces on first deal
             useAcePoint('player')
             return false;
@@ -265,14 +265,14 @@ const whoWon = (where) => {
             return false
         } else{
             revealHoleCard();
-            return displayMessage("Lost. Barst!")
+            return displayMessage("Lost. Busted!")
         }
     } else if (where == 'stand'){
         if (dPoint < 17){
             return false;
         } else if (dPoint>21){
             revealHoleCard();
-            return displayMessage("Won. Dealer Barst.");
+            return displayMessage("Won. Dealer Busted.");
         } else if(pPoint < 21 && (17 <= dPoint && dPoint < 21)){
             revealHoleCard();
             checkPointDiff(pPoint, dPoint);
