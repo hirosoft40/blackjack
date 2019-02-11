@@ -1,3 +1,3 @@
-# hirosoft40.github.io
+# Black Jack Card Game
 
 Blackjack Game
